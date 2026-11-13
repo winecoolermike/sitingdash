@@ -1,0 +1,642 @@
+{
+  "schema": {
+    "name": "sitingdash-pilot",
+    "version": "0.1.0",
+    "notes": "Draft contract for SitingIntel JSON output. Numeric fields are number or null. The display layer renders null as \u2014 (or 00 / -- in tally columns) and never invents values. Records with placeholder: true are sample-shaped layout only and must be labeled as such."
+  },
+  "meta": {
+    "product": "SitingDash",
+    "pilot": {
+      "id": "ohio",
+      "label": "Ohio Pilot",
+      "defaultCountyId": "licking-oh"
+    },
+    "status": "awaiting_sitingintel_data",
+    "dataState": "placeholder",
+    "generatedAt": null,
+    "source": {
+      "system": "SitingIntel",
+      "attribution": null,
+      "feed": null
+    },
+    "disclaimer": "This file is a sample-shaped placeholder for the Ohio pilot. It does not contain real project outcomes, vote tallies, council records, sentiment, or red flags."
+  },
+  "counties": [
+    {
+      "id": "licking-oh",
+      "name": "Licking County",
+      "state": "OH",
+      "fips": "39089",
+      "lastVerified": null,
+      "projectOutcomes": [
+        {
+          "id": "licking-oh-outcome-slot-01",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Project slot 01",
+          "projectName": null,
+          "projectType": null,
+          "status": null,
+          "decision": null,
+          "decisionDate": null,
+          "body": null,
+          "record": {
+            "yes": null,
+            "no": null,
+            "display": "00 / --"
+          },
+          "sourceUrl": null,
+          "sourceClass": null,
+          "lastVerified": null
+        },
+        {
+          "id": "licking-oh-outcome-slot-02",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Project slot 02",
+          "projectName": null,
+          "projectType": null,
+          "status": null,
+          "decision": null,
+          "decisionDate": null,
+          "body": null,
+          "record": {
+            "yes": null,
+            "no": null,
+            "display": "00 / --"
+          },
+          "sourceUrl": null,
+          "sourceClass": null,
+          "lastVerified": null
+        },
+        {
+          "id": "licking-oh-outcome-slot-03",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Project slot 03",
+          "projectName": null,
+          "projectType": null,
+          "status": null,
+          "decision": null,
+          "decisionDate": null,
+          "body": null,
+          "record": {
+            "yes": null,
+            "no": null,
+            "display": "00 / --"
+          },
+          "sourceUrl": null,
+          "sourceClass": null,
+          "lastVerified": null
+        }
+      ],
+      "ballotMeasures": [
+        {
+          "id": "licking-oh-ballot-slot-01",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Measure slot 01",
+          "title": null,
+          "electionDate": null,
+          "jurisdiction": null,
+          "result": null,
+          "yes": null,
+          "no": null,
+          "totalBallots": null,
+          "turnout": null,
+          "threshold": null,
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        },
+        {
+          "id": "licking-oh-ballot-slot-02",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Measure slot 02",
+          "title": null,
+          "electionDate": null,
+          "jurisdiction": null,
+          "result": null,
+          "yes": null,
+          "no": null,
+          "totalBallots": null,
+          "turnout": null,
+          "threshold": null,
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        },
+        {
+          "id": "licking-oh-ballot-slot-03",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Measure slot 03",
+          "title": null,
+          "electionDate": null,
+          "jurisdiction": null,
+          "result": null,
+          "yes": null,
+          "no": null,
+          "totalBallots": null,
+          "turnout": null,
+          "threshold": null,
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        }
+      ],
+      "councilVotes": [
+        {
+          "id": "licking-oh-council-slot-01",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Vote slot 01",
+          "body": null,
+          "meetingDate": null,
+          "matter": null,
+          "motion": null,
+          "result": null,
+          "tally": {
+            "yes": null,
+            "no": null,
+            "abstain": null,
+            "absent": null,
+            "display": "00 / --"
+          },
+          "rollCall": [
+            {
+              "member": null,
+              "vote": null,
+              "placeholder": true,
+              "label": "[SAMPLE SHAPE] Seat 01"
+            },
+            {
+              "member": null,
+              "vote": null,
+              "placeholder": true,
+              "label": "[SAMPLE SHAPE] Seat 02"
+            },
+            {
+              "member": null,
+              "vote": null,
+              "placeholder": true,
+              "label": "[SAMPLE SHAPE] Seat 03"
+            }
+          ],
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        },
+        {
+          "id": "licking-oh-council-slot-02",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Vote slot 02",
+          "body": null,
+          "meetingDate": null,
+          "matter": null,
+          "motion": null,
+          "result": null,
+          "tally": {
+            "yes": null,
+            "no": null,
+            "abstain": null,
+            "absent": null,
+            "display": "00 / --"
+          },
+          "rollCall": [
+            {
+              "member": null,
+              "vote": null,
+              "placeholder": true,
+              "label": "[SAMPLE SHAPE] Seat 01"
+            },
+            {
+              "member": null,
+              "vote": null,
+              "placeholder": true,
+              "label": "[SAMPLE SHAPE] Seat 02"
+            },
+            {
+              "member": null,
+              "vote": null,
+              "placeholder": true,
+              "label": "[SAMPLE SHAPE] Seat 03"
+            }
+          ],
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        }
+      ],
+      "sentimentTimeline": [
+        {
+          "id": "licking-oh-sentiment-slot-01",
+          "placeholder": true,
+          "periodLabel": "[SAMPLE SHAPE] Period 01",
+          "date": null,
+          "tone": null,
+          "volume": null,
+          "headline": null,
+          "sourceClass": "inference",
+          "lastVerified": null
+        },
+        {
+          "id": "licking-oh-sentiment-slot-02",
+          "placeholder": true,
+          "periodLabel": "[SAMPLE SHAPE] Period 02",
+          "date": null,
+          "tone": null,
+          "volume": null,
+          "headline": null,
+          "sourceClass": "inference",
+          "lastVerified": null
+        },
+        {
+          "id": "licking-oh-sentiment-slot-03",
+          "placeholder": true,
+          "periodLabel": "[SAMPLE SHAPE] Period 03",
+          "date": null,
+          "tone": null,
+          "volume": null,
+          "headline": null,
+          "sourceClass": "inference",
+          "lastVerified": null
+        },
+        {
+          "id": "licking-oh-sentiment-slot-04",
+          "placeholder": true,
+          "periodLabel": "[SAMPLE SHAPE] Period 04",
+          "date": null,
+          "tone": null,
+          "volume": null,
+          "headline": null,
+          "sourceClass": "inference",
+          "lastVerified": null
+        }
+      ],
+      "redFlags": [
+        {
+          "id": "licking-oh-flag-slot-01",
+          "placeholder": true,
+          "severity": null,
+          "title": "[SAMPLE SHAPE] Flag slot 01",
+          "summary": null,
+          "evidence": null,
+          "sourceClass": null,
+          "sourceUrl": null,
+          "lastVerified": null
+        },
+        {
+          "id": "licking-oh-flag-slot-02",
+          "placeholder": true,
+          "severity": null,
+          "title": "[SAMPLE SHAPE] Flag slot 02",
+          "summary": null,
+          "evidence": null,
+          "sourceClass": null,
+          "sourceUrl": null,
+          "lastVerified": null
+        },
+        {
+          "id": "licking-oh-flag-slot-03",
+          "placeholder": true,
+          "severity": null,
+          "title": "[SAMPLE SHAPE] Flag slot 03",
+          "summary": null,
+          "evidence": null,
+          "sourceClass": null,
+          "sourceUrl": null,
+          "lastVerified": null
+        }
+      ],
+      "communityBenefitPrecedents": [
+        {
+          "id": "licking-oh-benefit-slot-01",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Precedent slot 01",
+          "projectName": null,
+          "year": null,
+          "commitment": null,
+          "status": null,
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        },
+        {
+          "id": "licking-oh-benefit-slot-02",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Precedent slot 02",
+          "projectName": null,
+          "year": null,
+          "commitment": null,
+          "status": null,
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        }
+      ]
+    },
+    {
+      "id": "delaware-oh",
+      "name": "Delaware County",
+      "state": "OH",
+      "fips": "39041",
+      "lastVerified": null,
+      "projectOutcomes": [
+        {
+          "id": "delaware-oh-outcome-slot-01",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Project slot 01",
+          "projectName": null,
+          "projectType": null,
+          "status": null,
+          "decision": null,
+          "decisionDate": null,
+          "body": null,
+          "record": {
+            "yes": null,
+            "no": null,
+            "display": "00 / --"
+          },
+          "sourceUrl": null,
+          "sourceClass": null,
+          "lastVerified": null
+        },
+        {
+          "id": "delaware-oh-outcome-slot-02",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Project slot 02",
+          "projectName": null,
+          "projectType": null,
+          "status": null,
+          "decision": null,
+          "decisionDate": null,
+          "body": null,
+          "record": {
+            "yes": null,
+            "no": null,
+            "display": "00 / --"
+          },
+          "sourceUrl": null,
+          "sourceClass": null,
+          "lastVerified": null
+        },
+        {
+          "id": "delaware-oh-outcome-slot-03",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Project slot 03",
+          "projectName": null,
+          "projectType": null,
+          "status": null,
+          "decision": null,
+          "decisionDate": null,
+          "body": null,
+          "record": {
+            "yes": null,
+            "no": null,
+            "display": "00 / --"
+          },
+          "sourceUrl": null,
+          "sourceClass": null,
+          "lastVerified": null
+        }
+      ],
+      "ballotMeasures": [
+        {
+          "id": "delaware-oh-ballot-slot-01",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Measure slot 01",
+          "title": null,
+          "electionDate": null,
+          "jurisdiction": null,
+          "result": null,
+          "yes": null,
+          "no": null,
+          "totalBallots": null,
+          "turnout": null,
+          "threshold": null,
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        },
+        {
+          "id": "delaware-oh-ballot-slot-02",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Measure slot 02",
+          "title": null,
+          "electionDate": null,
+          "jurisdiction": null,
+          "result": null,
+          "yes": null,
+          "no": null,
+          "totalBallots": null,
+          "turnout": null,
+          "threshold": null,
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        },
+        {
+          "id": "delaware-oh-ballot-slot-03",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Measure slot 03",
+          "title": null,
+          "electionDate": null,
+          "jurisdiction": null,
+          "result": null,
+          "yes": null,
+          "no": null,
+          "totalBallots": null,
+          "turnout": null,
+          "threshold": null,
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        }
+      ],
+      "councilVotes": [
+        {
+          "id": "delaware-oh-council-slot-01",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Vote slot 01",
+          "body": null,
+          "meetingDate": null,
+          "matter": null,
+          "motion": null,
+          "result": null,
+          "tally": {
+            "yes": null,
+            "no": null,
+            "abstain": null,
+            "absent": null,
+            "display": "00 / --"
+          },
+          "rollCall": [
+            {
+              "member": null,
+              "vote": null,
+              "placeholder": true,
+              "label": "[SAMPLE SHAPE] Seat 01"
+            },
+            {
+              "member": null,
+              "vote": null,
+              "placeholder": true,
+              "label": "[SAMPLE SHAPE] Seat 02"
+            },
+            {
+              "member": null,
+              "vote": null,
+              "placeholder": true,
+              "label": "[SAMPLE SHAPE] Seat 03"
+            }
+          ],
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        },
+        {
+          "id": "delaware-oh-council-slot-02",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Vote slot 02",
+          "body": null,
+          "meetingDate": null,
+          "matter": null,
+          "motion": null,
+          "result": null,
+          "tally": {
+            "yes": null,
+            "no": null,
+            "abstain": null,
+            "absent": null,
+            "display": "00 / --"
+          },
+          "rollCall": [
+            {
+              "member": null,
+              "vote": null,
+              "placeholder": true,
+              "label": "[SAMPLE SHAPE] Seat 01"
+            },
+            {
+              "member": null,
+              "vote": null,
+              "placeholder": true,
+              "label": "[SAMPLE SHAPE] Seat 02"
+            },
+            {
+              "member": null,
+              "vote": null,
+              "placeholder": true,
+              "label": "[SAMPLE SHAPE] Seat 03"
+            }
+          ],
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        }
+      ],
+      "sentimentTimeline": [
+        {
+          "id": "delaware-oh-sentiment-slot-01",
+          "placeholder": true,
+          "periodLabel": "[SAMPLE SHAPE] Period 01",
+          "date": null,
+          "tone": null,
+          "volume": null,
+          "headline": null,
+          "sourceClass": "inference",
+          "lastVerified": null
+        },
+        {
+          "id": "delaware-oh-sentiment-slot-02",
+          "placeholder": true,
+          "periodLabel": "[SAMPLE SHAPE] Period 02",
+          "date": null,
+          "tone": null,
+          "volume": null,
+          "headline": null,
+          "sourceClass": "inference",
+          "lastVerified": null
+        },
+        {
+          "id": "delaware-oh-sentiment-slot-03",
+          "placeholder": true,
+          "periodLabel": "[SAMPLE SHAPE] Period 03",
+          "date": null,
+          "tone": null,
+          "volume": null,
+          "headline": null,
+          "sourceClass": "inference",
+          "lastVerified": null
+        },
+        {
+          "id": "delaware-oh-sentiment-slot-04",
+          "placeholder": true,
+          "periodLabel": "[SAMPLE SHAPE] Period 04",
+          "date": null,
+          "tone": null,
+          "volume": null,
+          "headline": null,
+          "sourceClass": "inference",
+          "lastVerified": null
+        }
+      ],
+      "redFlags": [
+        {
+          "id": "delaware-oh-flag-slot-01",
+          "placeholder": true,
+          "severity": null,
+          "title": "[SAMPLE SHAPE] Flag slot 01",
+          "summary": null,
+          "evidence": null,
+          "sourceClass": null,
+          "sourceUrl": null,
+          "lastVerified": null
+        },
+        {
+          "id": "delaware-oh-flag-slot-02",
+          "placeholder": true,
+          "severity": null,
+          "title": "[SAMPLE SHAPE] Flag slot 02",
+          "summary": null,
+          "evidence": null,
+          "sourceClass": null,
+          "sourceUrl": null,
+          "lastVerified": null
+        },
+        {
+          "id": "delaware-oh-flag-slot-03",
+          "placeholder": true,
+          "severity": null,
+          "title": "[SAMPLE SHAPE] Flag slot 03",
+          "summary": null,
+          "evidence": null,
+          "sourceClass": null,
+          "sourceUrl": null,
+          "lastVerified": null
+        }
+      ],
+      "communityBenefitPrecedents": [
+        {
+          "id": "delaware-oh-benefit-slot-01",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Precedent slot 01",
+          "projectName": null,
+          "year": null,
+          "commitment": null,
+          "status": null,
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        },
+        {
+          "id": "delaware-oh-benefit-slot-02",
+          "placeholder": true,
+          "label": "[SAMPLE SHAPE] Precedent slot 02",
+          "projectName": null,
+          "year": null,
+          "commitment": null,
+          "status": null,
+          "sourceUrl": null,
+          "sourceClass": "fact",
+          "lastVerified": null
+        }
+      ]
+    }
+  ]
+}

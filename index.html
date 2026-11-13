@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>SitingDash — Ohio Pilot</title>
+  <meta name="description" content="A county scoreboard of how siting decisions were made — project outcomes, ballot tallies, council votes, sentiment, and red flags.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip" href="#board">Skip to scoreboard</a>
+
+  <div class="scan" aria-hidden="true"></div>
+
+  <header class="mast">
+    <div class="mast-row">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">◆</span>
+        <h1>SitingDash</h1>
+        <span class="pill pilot">Ohio Pilot</span>
+      </div>
+      <div class="mast-meta" id="mast-meta">
+        <span class="src-state" id="src-state">BOOTING…</span>
+      </div>
+    </div>
+    <p class="value-prop">A county scoreboard of how siting decisions were made — project outcomes, ballot tallies, council votes, sentiment, and red flags.</p>
+  </header>
+
+  <div class="await-banner" role="status">
+    <span class="pulse" aria-hidden="true"></span>
+    <strong>AWAITING SITINGINTEL DATA.</strong>
+    Every card below is a sample-shaped layout only. Figures are placeholders (<code>—</code> / <code>00 / --</code>), not real results.
+  </div>
+
+  <div class="legend-bar" aria-label="Data class legend">
+    <span class="badge fact">Fact</span> official record
+    <span class="sep">·</span>
+    <span class="badge inference">Inference</span> derived judgment
+    <span class="sep">·</span>
+    <span class="badge await">Class —</span> not yet classified
+    <span class="sep">·</span>
+    Placeholder rows may show a section-typical class only as layout chrome, not as a real call.
+  </div>
+
+  <div class="county-bar">
+    <div class="county-label">County</div>
+    <div class="county-switch" id="county-switch" role="tablist" aria-label="Ohio pilot counties">
+      <button type="button" role="tab" id="tab-licking-oh" data-county="licking-oh" aria-selected="true" aria-controls="board">Licking County, OH</button>
+      <button type="button" role="tab" id="tab-delaware-oh" data-county="delaware-oh" aria-selected="false" aria-controls="board">Delaware County, OH</button>
+    </div>
+    <div class="county-status" id="county-status">
+      <span id="county-name">Licking County, OH</span>
+      <span class="sep" aria-hidden="true">·</span>
+      <span class="verified" id="county-verified">LAST VERIFIED: AWAITING DATA</span>
+    </div>
+  </div>
+
+  <noscript>
+    <div class="await-banner noscript">JavaScript is required to switch counties and load the placeholder feed. The section shells below still describe the intended scoreboard layout.</div>
+  </noscript>
+
+  <main id="board" class="board">
+    <section class="card" id="sec-outcomes" aria-labelledby="h-outcomes">
+      <header class="card-head">
+        <div>
+          <p class="card-kicker">01 // Local record</p>
+          <h2 id="h-outcomes">Project Outcomes</h2>
+        </div>
+        <span class="stamp">AWAITING SITINGINTEL DATA</span>
+      </header>
+      <p class="card-lead">Final siting outcomes and the official decision record, once SitingIntel is wired in.</p>
+      <div class="table-wrap" id="out-outcomes">
+        <table class="scoreboard">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Decision</th>
+              <th>Date</th>
+              <th>Body</th>
+              <th class="num">Record</th>
+              <th>Class</th>
+            </tr>
+          </thead>
+          <tbody id="body-outcomes">
+            <tr class="empty-row"><td colspan="8">Loading placeholder layout…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <footer class="card-foot"><span class="verified" data-verified>LAST VERIFIED: AWAITING DATA</span></footer>
+    </section>
+
+    <section class="card" id="sec-ballots" aria-labelledby="h-ballots">
+      <header class="card-head">
+        <div>
+          <p class="card-kicker">02 // Public vote</p>
+          <h2 id="h-ballots">Ballot Measures</h2>
+        </div>
+        <span class="stamp">AWAITING SITINGINTEL DATA</span>
+      </header>
+      <p class="card-lead">Measure titles, election dates, and yes/no tallies. Bars stay empty until official counts arrive.</p>
+      <div id="out-ballots">
+        <p class="loading-note">Loading placeholder layout…</p>
+      </div>
+      <footer class="card-foot"><span class="verified" data-verified>LAST VERIFIED: AWAITING DATA</span></footer>
+    </section>
+
+    <section class="card" id="sec-council" aria-labelledby="h-council">
+      <header class="card-head">
+        <div>
+          <p class="card-kicker">03 // Official body</p>
+          <h2 id="h-council">Council Voting Records</h2>
+        </div>
+        <span class="stamp">AWAITING SITINGINTEL DATA</span>
+      </header>
+      <p class="card-lead">Meeting-level motions with tallies and a sample-shaped roll-call grid.</p>
+      <div id="out-council">
+        <p class="loading-note">Loading placeholder layout…</p>
+      </div>
+      <footer class="card-foot"><span class="verified" data-verified>LAST VERIFIED: AWAITING DATA</span></footer>
+    </section>
+
+    <section class="card" id="sec-sentiment" aria-labelledby="h-sentiment">
+      <header class="card-head">
+        <div>
+          <p class="card-kicker">04 // Public signal</p>
+          <h2 id="h-sentiment">Sentiment Timeline</h2>
+        </div>
+        <span class="stamp">AWAITING SITINGINTEL DATA</span>
+      </header>
+      <p class="card-lead">Period markers for local sentiment. Tone and volume are inferences when they land, and are labeled as such.</p>
+      <div id="out-sentiment">
+        <p class="loading-note">Loading placeholder layout…</p>
+      </div>
+      <footer class="card-foot"><span class="verified" data-verified>LAST VERIFIED: AWAITING DATA</span></footer>
+    </section>
+
+    <section class="card" id="sec-flags" aria-labelledby="h-flags">
+      <header class="card-head">
+        <div>
+          <p class="card-kicker">05 // Risk board</p>
+          <h2 id="h-flags">Red Flags</h2>
+        </div>
+        <span class="stamp">AWAITING SITINGINTEL DATA</span>
+      </header>
+      <p class="card-lead">Severity-tagged issues with room for evidence and source class (fact vs. inference).</p>
+      <div id="out-flags">
+        <p class="loading-note">Loading placeholder layout…</p>
+      </div>
+      <footer class="card-foot"><span class="verified" data-verified>LAST VERIFIED: AWAITING DATA</span></footer>
+    </section>
+
+    <section class="card" id="sec-benefits" aria-labelledby="h-benefits">
+      <header class="card-head">
+        <div>
+          <p class="card-kicker">06 // Comparables</p>
+          <h2 id="h-benefits">Community Benefit Precedents</h2>
+        </div>
+        <span class="stamp">AWAITING SITINGINTEL DATA</span>
+      </header>
+      <p class="card-lead">Prior community-benefit commitments in similar siting cases, for comparison once the feed is live.</p>
+      <div class="table-wrap" id="out-benefits">
+        <table class="scoreboard">
+          <thead>
+            <tr>
+              <th>Precedent</th>
+              <th>Project</th>
+              <th>Year</th>
+              <th>Commitment</th>
+              <th>Status</th>
+              <th>Class</th>
+            </tr>
+          </thead>
+          <tbody id="body-benefits">
+            <tr class="empty-row"><td colspan="6">Loading placeholder layout…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <footer class="card-foot"><span class="verified" data-verified>LAST VERIFIED: AWAITING DATA</span></footer>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <p><strong>SitingDash</strong> Ohio pilot scaffold. Static HTML/CSS/JS, prepared locally and not published.</p>
+    <p>Not legal, financial, or political advice. Placeholder rows are layout chrome only — do not treat them as real Licking or Delaware County results.</p>
+    <p class="foot-meta" id="foot-meta">schema sitingdash-pilot @ 0.1.0</p>
+  </footer>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>
