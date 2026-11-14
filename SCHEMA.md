@@ -8,7 +8,9 @@ The renderer accepts `schema.version` `0.1.x` and `0.2.x`.
 Ground rules (unchanged):
 
 - Never estimate. Unknown → `null` (or omit an optional field). Numbers are JSON numbers or `null`.
-- Every record carries `sourceClass` (`"fact"` | `"inference"`), at least one source URL where one exists, and `lastVerified`.
+- Every record carries `sourceClass` (`"fact"` | `"inference"` | `"unconfirmed"`), at least one source URL where one exists, and `lastVerified`.
+- `"fact"` means verified against an official or primary record (or an original news report of it). Anything secondhand,
+  single-source and unverified, or estimated is `"unconfirmed"`, never `"fact"`.
 - The renderer only displays what is in the file. The single derived value it may show is a yes-percentage computed
   from `yes`/`no` when `yesPct` is absent, and it labels that value **computed**.
 
@@ -28,6 +30,8 @@ Ground rules (unchanged):
 | 8 | **`terms`** object (optional); `commitment` kept | communityBenefitPrecedents | Structured terms alongside the human-readable `commitment` string. |
 | 9 | **`toneClass`** (`"fact"` \| `"inference"`) | sentimentTimeline | Class of the `tone` call. The record `sourceClass` can be `"fact"` when the headline/quote is sourced while `toneClass` stays `"inference"`. |
 | — | `effect`, `dateNote` | regulatoryActions (and any dated record for `dateNote`) | See below. |
+| 10 | **`sourceClass: "unconfirmed"`** added (v0.2.0, 2026-11-13) | Every record | Secondhand or single-source, not verified against an official or primary record. Shown as a magenta UNCONFIRMED badge, distinct from FACT (cyan) and INFERENCE (amber). |
+| 11 | **`severityClass`** (always `"inference"`) and the severity rubric below | redFlags | |
 
 Not adopted: per-field `sourceClass` on every field (only `toneClass` and the severity rule above).
 
@@ -77,7 +81,7 @@ Both are shown in the page header and status banner.
 | `id` | string | required, unique across the file |
 | `placeholder` | boolean | `false` for real rows |
 | `label` | string | optional display label |
-| `sourceClass` | `"fact"` \| `"inference"` | required for real rows |
+| `sourceClass` | `"fact"` \| `"inference"` \| `"unconfirmed"` | required for real rows |
 | `sourceUrl` | string \| null | primary source; should equal `sourceUrls[0]` |
 | `sourceUrls` | string[] | **new** optional; all sources, `http(s)` only |
 | `sourceRecordId` | string | **new** optional |
@@ -155,8 +159,28 @@ Renderer sorts rows by `date` string ascending (nulls last).
 ### redFlags
 v0.1.0: `severity`, `title`, `summary`, `evidence`.
 
-- `severity`: `"high"` \| `"medium"` \| `"low"` \| `null` (not rated). Always an inference.
-- `severityBasis`: optional string explaining the rating.
+- `severity`: `"high"` \| `"medium"` \| `"low"` \| `null` (not rated → shown as UNRATED). Always an inference.
+- `severityClass`: optional, always `"inference"`.
+- `severityBasis`: optional one-line string naming the rubric rule that matched and the flag text it matched.
+
+#### Severity rubric (SitingDash)
+
+Severity is judged only from the flag's own `title` and `summary`. It rates how much the issue the flag describes bears on
+siting outcomes. If no rule clearly matches the text, severity stays `null` (UNRATED). Displayed as
+"SEVERITY (SITINGDASH INFERENCE)".
+
+| Rule | Level | Matches when the flag text states… |
+| --- | --- | --- |
+| H1 | high | an enacted moratorium or ban (adopted / passed / in effect, or a recorded passing vote) |
+| H2 | high | a denial of the project |
+| H3 | high | a ballot or referendum defeat for the project |
+| H4 | high | litigation or an appeal affecting the project |
+| M1 | medium | a pending or proposed moratorium or ban, including one placed on (or being certified to) a ballot |
+| M2 | medium | organized opposition with an official action scheduled |
+| M3 | medium | a utility or water constraint documented in an official record |
+| L1 | low | commentary or social sentiment with no official action |
+
+Data-quality flags (source contradictions, gaps, paywalls, clerical errors) usually match no rule and stay UNRATED.
 - `evidence`: string (may be ` ; `-separated URLs and/or record ids) **or** string[]. URLs render as links; a token matching
   another record's `id` renders as an in-page jump link.
 
@@ -184,3 +208,30 @@ v0.1.0: `projectName`, `year`, `commitment`, `status`. `commitment` stays as the
 | `effect` | string \| null | What the action does |
 | `expires` | string \| null | Optional end date for moratoria |
 | + shared fields | | |
+
+## SitingDash overlay (`data/sitingdash-overrides.json`)
+
+SitingDash never edits SitingIntel's feed. Its corrections live in an overlay applied in the browser at render time, and every
+affected row shows a "RELABELED BY SITINGDASH" / "SEVERITY SET BY SITINGDASH" / "SOURCE ADDED BY SITINGDASH" note with the rule and reason.
+
+```json
+{ "name": "sitingdash-overrides", "version": "1.0.0",
+  "appliesTo": { "file": "data/ohio-pilot.json", "generatedAt": "2026-11-14T00:18:52Z" },
+  "rules": { "U1": "...", "H1": "..." },
+  "overrides": [
+    { "id": "delaware-oh-flag-19", "rule": "U1", "set": { "sourceClass": "unconfirmed" }, "was": { "sourceClass": "fact" }, "reason": "..." },
+    { "id": "licking-oh-flag-09", "rule": "H4", "set": { "severity": "high", "severityClass": "inference", "severityBasis": "H4: ..." }, "reason": "..." },
+    { "id": "licking-oh-flag-20", "rule": "S1", "addSourceUrls": ["https://..."], "sourceNote": "source added by SitingDash, verified 2026-11-13 PT", "reason": "..." },
+    { "id": "licking-oh-flag-15", "rule": "R1", "relatedRecords": ["licking-oh-vote-14"], "reason": "..." }
+  ] }
+```
+
+Relabel rules (FACT → UNCONFIRMED), built by `tools/build-overrides.py`:
+
+- **U1** — red flags SitingIntel generated as "Secondhand/unconfirmed source: …".
+- **U2** — records SitingIntel's dataset marks `reported` (secondary/aggregator/snippet; not independently confirmed).
+- **U3** — Delaware records named by a secondhand flag whose reason says the main claim is secondhand, single-source, or unverified.
+- **U4** — records whose own text says unverified / not verified / secondhand / as quoted / est. / estimate / snippet /
+  search summary / aggregator / tracker-only / unconfirmed / reportedly / "(reported)" (four items excluded; see `u4Excluded`).
+
+If SitingIntel emits `"unconfirmed"` directly, the overlay's relabels for those records become no-ops.

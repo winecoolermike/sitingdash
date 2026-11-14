@@ -721,3 +721,38 @@ table.milestones { margin-top: 6px; }
 #sec-actions .scoreboard td:nth-child(5) { min-width: 18ch; }
 #sec-actions .scoreboard td:nth-child(6) { min-width: 22ch; }
 .ballot-result .badge.status, .ballot-result .badge.neg, .ballot-result .badge.pending { max-width: none; }
+
+/* ---------- overlay: unconfirmed class, relabel notes, severity, sources ---------- */
+:root { --magenta: #ff4fd8; }
+.badge.unconfirmed { color: var(--magenta); border-color: var(--magenta); background: #1a0316; }
+.sd-relabel { margin-top: 4px; font-size: 10px; line-height: 1.6; }
+.sd-tag {
+  display: inline-block;
+  color: var(--magenta);
+  border: 1px dashed #8a2a76;
+  padding: 0 4px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.sd-note { color: var(--magenta); font-size: 10px; letter-spacing: 0.06em; }
+.src-label.added { color: var(--magenta); border-color: #8a2a76; }
+.src-added, .src-related { margin-top: 3px; }
+.src-none-box {
+  margin: 4px 0;
+  padding: 6px 8px;
+  border: 1px solid var(--red);
+  background: #1a0306;
+  color: #ffb3ba;
+  font-size: 11px;
+}
+.src-none-box strong { color: var(--red); letter-spacing: 0.08em; }
+.flag-sev .badge { white-space: normal; text-align: left; line-height: 1.3; }
+.flag { grid-template-columns: 150px 1fr; }
+.tally-row { grid-template-columns: 56px 1fr 80px 64px 230px; }
+.pct-src { font-size: 9px; letter-spacing: 0.08em; color: var(--dim); }
+.pct-src.src-notes { color: var(--magenta); }
+.pct-src.src-computed { color: var(--amber); }
+.pct-src.src-feed { color: var(--green); }
+@media (max-width: 800px) { .tally-row { grid-template-columns: 48px 1fr 64px 56px; } .pct-src { grid-column: 1 / -1; } }
+.banner-sd { margin-top: 4px; font-size: 11px; color: var(--magenta); }

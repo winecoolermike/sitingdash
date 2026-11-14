@@ -1,6 +1,7 @@
 /* SitingDash Ohio pilot — render-only front end (schema sitingdash-pilot 0.1.x / 0.2.x).
-   Displays only what is in the JSON feed. The single derived value is a yes-percentage computed from
-   yes/no when the feed has no yesPct, and it is labeled "computed".
+   Displays only what is in the JSON feed plus SitingDash's labeled overlay (data/sitingdash-overrides.json).
+   Derived/secondary values are labeled: pct computed from yes/no ("COMPUTED FROM YES/NO"), pct found only in
+   notes ("FROM NOTES · NOT IN STRUCTURED FEED"), certification found only in text ("UNOFFICIAL · PER SOURCE TEXT").
 
    Data path: ?data=data/<file>.json (relative, under data/ only), default data/ohio-pilot.json,
    then data/pilot-placeholder.json. If fetch is unavailable (file:// open), it loads the inline copy in
@@ -11,6 +12,8 @@
 const DEFAULT_DATA = "data/ohio-pilot.json";
 const PLACEHOLDER_DATA = "data/pilot-placeholder.json";
 const INLINE_SCRIPT = "data/ohio-pilot.inline.js";
+const OVERRIDES_DATA = "data/sitingdash-overrides.json";
+const OVERRIDES_INLINE = "data/sitingdash-overrides.inline.js";
 const TZ = "America/Los_Angeles";
 const VERIFIED_PREFIX = "LAST VERIFIED: ";
 
@@ -84,6 +87,7 @@ function classBadge(sourceClass, prefix = "") {
   const p = prefix ? `${esc(prefix)} ` : "";
   if (sourceClass === "fact") return `<span class="badge fact">${p}Fact</span>`;
   if (sourceClass === "inference") return `<span class="badge inference">${p}Inference</span>`;
+  if (sourceClass === "unconfirmed") return `<span class="badge unconfirmed" title="Secondhand or single-source; not verified against an official or primary record">${p}Unconfirmed</span>`;
   return `<span class="badge await">${p}Class —</span>`;
 }
 
@@ -99,9 +103,9 @@ function statusBadge(value) {
 
 function severityBadge(value) {
   const v = isBlank(value) ? null : String(value).toLowerCase();
-  if (!v) return `<span class="badge sev-none" title="Severity not rated. Severity is an inference when present.">SEV —</span>`;
+  if (!v) return `<span class="badge sev-none" title="No rubric rule clearly matched this flag's text">SEVERITY: UNRATED</span>`;
   const cls = ["high", "medium", "low"].includes(v) ? `sev-${v}` : "sev-none";
-  return `<span class="badge ${cls}" title="Severity is an analyst inference">SEV ${esc(v)}</span>`;
+  return `<span class="badge ${cls}" title="Assigned by SitingDash's rubric (SCHEMA.md); always an inference">SEVERITY (SITINGDASH INFERENCE): ${esc(v)}</span>`;
 }
 
 function verifiedChip(row) {
@@ -117,8 +121,27 @@ function allSources(row) {
 
 function sourcesHtml(row) {
   const urls = allSources(row);
-  if (!urls.length) return `<span class="src-none">NO SOURCE URL IN FEED</span>`;
-  return `<span class="src-label">SRC</span> ` + urls.map((u, i) => `<span class="src-item">[${i + 1}] ${link(u)}</span>`).join(" ");
+  const added = (row._sd?.addedUrls || []).filter((u) => safeUrl(u) && !urls.includes(u));
+  const related = (row._sd?.related || []).map((id) => `<a href="#" class="ref" data-ref="${esc(id)}">↳ ${esc(id)}</a>`).join(" ");
+  let html = "";
+  if (urls.length) {
+    html += `<span class="src-label">SRC</span> ` + urls.map((u, i) => `<span class="src-item">[${i + 1}] ${link(u)}</span>`).join(" ");
+  } else if (!added.length) {
+    html += `<div class="src-none-box"><strong>⚠ NO SOURCE URL IN FEED.</strong> SitingIntel cited no source for this item and SitingDash could not find a public source that directly supports it. Treat with caution.</div>`;
+  }
+  if (added.length) {
+    html += `<div class="src-added"><span class="src-label added">SRC + SITINGDASH</span> ` +
+      added.map((u, i) => `<span class="src-item">[S${i + 1}] ${link(u)}</span>`).join(" ") +
+      ` <span class="sd-note">${esc(row._sd.sourceNote || "source added by SitingDash")}</span>${row.sourceUrl ? "" : ` <span class="muted small">(SitingIntel feed: no source URL)</span>`}</div>`;
+  }
+  if (related) html += `<div class="src-related"><span class="src-label">RELATED RECORDS</span> ${related}</div>`;
+  return html;
+}
+
+function sdNotesHtml(row) {
+  const items = row._sd?.log || [];
+  if (!items.length) return "";
+  return `<div class="sd-relabel">${items.map((it) => `<div><span class="sd-tag">${esc(it.label)}</span> <span class="muted">${esc(it.rule)} · ${esc(it.reason)}</span></div>`).join("")}</div>`;
 }
 
 function noteLines(notes) {
@@ -159,6 +182,7 @@ function rowMeta(row, extra = "") {
     <div class="row-meta-line">${classBadge(row.sourceClass)} ${verifiedChip(row)}
       ${row.sourceRecordId ? `<span class="rec-id">${esc(row.sourceRecordId)}${row.sourceFactType ? " · " + esc(row.sourceFactType) : ""}</span>` : ""}</div>
     <div class="row-sources">${sourcesHtml(row)}</div>
+    ${sdNotesHtml(row)}
     ${extra}
     ${notesHtml(row)}
   </div>`;
@@ -245,9 +269,22 @@ function certBadge(row, hasVotes) {
   if (!hasVotes) return "";
   const text = `${row.result || ""} ${noteLines(row.notes).join(" ")}`;
   if (/unofficial|preliminary/i.test(text)) {
-    return `<span class="badge cert-unofficial" title="No certification field; the record's result/notes text says unofficial or preliminary">UNOFFICIAL (per source text)</span>`;
+    return `<span class="badge cert-unofficial" title="No certification field; the record's result/notes text says unofficial or preliminary">UNOFFICIAL · PER SOURCE TEXT</span>`;
   }
   return `<span class="badge await">CERTIFICATION NOT STATED</span>`;
+}
+
+/* Percentages that SitingIntel put only inside notes text (e.g. vote_totals: {"yes_pct": 51.14}). Shown with a label. */
+function pctFromNotes(row) {
+  const text = noteLines(row.notes).join(" | ");
+  const grab = (keys) => {
+    for (const k of keys) {
+      const m = text.match(new RegExp(`"${k}"\\s*:\\s*(-?\\d+(?:\\.\\d+)?)`));
+      if (m) return { value: Number(m[1]), key: k };
+    }
+    return null;
+  };
+  return { yes: grab(["yes_pct", "for_pct"]), no: grab(["no_pct", "against_pct"]) };
 }
 
 function pctFmt(n) {
@@ -263,23 +300,27 @@ function renderBallots(county, meta) {
     const title = row.title || row.label || "[SAMPLE SHAPE]";
     const yes = isNum(row.yes) ? row.yes : null;
     const no = isNum(row.no) ? row.no : null;
-    let yesPct = isNum(row.yesPct) ? row.yesPct : null;
-    let noPct = isNum(row.noPct) ? row.noPct : null;
-    let pctSource = yesPct !== null || noPct !== null ? "pct per source" : null;
-    if (!pctSource && yes !== null && no !== null && yes + no > 0) {
-      yesPct = (yes / (yes + no)) * 100;
-      noPct = (no / (yes + no)) * 100;
-      pctSource = "computed from yes/no";
-    }
-    const hasVotes = yes !== null || no !== null || yesPct !== null || noPct !== null;
-    const bar = (label, count, pct, cls) => `<div class="tally-row">
-        <span class="lbl">${label}</span>
-        <span class="track${pct !== null ? " live" : ""}" aria-hidden="true"><i class="fill ${cls}" style="width:${pct !== null ? Math.max(0, Math.min(100, pct)).toFixed(2) : 0}%"></i></span>
+    const fromNotes = pctFromNotes(row);
+    const total = yes !== null && no !== null ? yes + no : 0;
+    const side = (structured, notesHit, count) => {
+      if (isNum(structured)) return { pct: structured, src: "feed", tag: "PER FEED" };
+      if (notesHit) return { pct: notesHit.value, src: "notes", tag: "FROM NOTES · NOT IN STRUCTURED FEED", key: notesHit.key };
+      if (total > 0 && count !== null) return { pct: (count / total) * 100, src: "computed", tag: "COMPUTED FROM YES/NO" };
+      return { pct: null, src: null, tag: null };
+    };
+    const ys = side(row.yesPct, fromNotes.yes, yes);
+    const ns = side(row.noPct, fromNotes.no, no);
+    const hasVotes = yes !== null || no !== null || ys.pct !== null || ns.pct !== null;
+    const label = (s) => s.key === "for_pct" ? "For" : s.key === "against_pct" ? "Against" : null;
+    const bar = (dflt, count, s, cls) => `<div class="tally-row">
+        <span class="lbl">${esc(label(s) || dflt)}</span>
+        <span class="track${s.pct !== null ? " live" : ""}" aria-hidden="true"><i class="fill ${cls}" style="width:${s.pct !== null ? Math.max(0, Math.min(100, s.pct)).toFixed(2) : 0}%"></i></span>
         <span class="val">${count !== null ? esc(count.toLocaleString("en-US")) : `<span class="dash">—</span>`}</span>
-        <span class="pct">${pct !== null ? esc(pctFmt(pct)) : `<span class="dash">—</span>`}</span>
+        <span class="pct">${s.pct !== null ? esc(pctFmt(s.pct)) : `<span class="dash">—</span>`}</span>
+        <span class="pct-src ${s.src ? "src-" + s.src : ""}">${s.tag ? esc(s.tag) : ""}</span>
       </div>`;
     const caption = hasVotes
-      ? `${pctSource ? esc(pctSource.toUpperCase()) : "PCT NOT IN FEED"}${(yes === null && no === null) ? " · raw counts not in feed" : ""}`
+      ? `${(yes === null && no === null) ? "Raw vote counts not in feed" : "Vote counts per feed"}`
       : "No vote counts in feed";
     const facts = [
       ["Ballots", isNum(row.totalBallots) ? row.totalBallots.toLocaleString("en-US") : null],
@@ -296,7 +337,7 @@ function renderBallots(county, meta) {
           ${row.certificationNote ? `<div class="muted small">${esc(row.certificationNote)}</div>` : ""}
         </div>
       </div>
-      <div class="tally">${bar("Yes", yes, yesPct, "yes")}${bar("No", no, noPct, "no")}</div>
+      <div class="tally">${bar("Yes", yes, ys, "yes")}${bar("No", no, ns, "no")}</div>
       <div class="track-caption${hasVotes ? " live" : ""}">${caption}</div>
       <div class="ballot-facts">${facts}</div>
       ${rowMeta(row)}
@@ -574,6 +615,63 @@ async function loadData() {
   return { payload: null, how: "no data could be loaded" };
 }
 
+async function loadOverrides() {
+  if (location.protocol !== "file:") {
+    try {
+      const res = await fetch(OVERRIDES_DATA, { cache: "no-store" });
+      if (res.ok) return { overlay: await res.json(), how: `overrides ${OVERRIDES_DATA}` };
+      console.warn(`SitingDash: ${OVERRIDES_DATA} HTTP ${res.status}`);
+    } catch (err) {
+      console.warn(`SitingDash: could not load ${OVERRIDES_DATA}:`, err.message || err);
+    }
+  }
+  const inline = await new Promise((resolve) => {
+    if (window.SITINGDASH_OVERRIDES_INLINE) return resolve(window.SITINGDASH_OVERRIDES_INLINE);
+    const s = document.createElement("script");
+    s.src = OVERRIDES_INLINE;
+    s.onload = () => resolve(window.SITINGDASH_OVERRIDES_INLINE || null);
+    s.onerror = () => resolve(null);
+    document.head.appendChild(s);
+  });
+  return inline ? { overlay: inline, how: "overrides inline copy" } : { overlay: null, how: "no SitingDash overrides loaded" };
+}
+
+/* Applies SitingDash's overlay in memory. Records keep their SitingIntel values in _sd.was. */
+function applyOverrides(payload, overlay) {
+  if (!overlay || !Array.isArray(overlay.overrides)) return 0;
+  const byId = new Map();
+  payload.counties.forEach((c) => SECTION_KEYS.forEach((k) => (c[k] || []).forEach((r) => r && r.id && byId.set(r.id, r))));
+  let applied = 0;
+  overlay.overrides.forEach((o) => {
+    const rec = byId.get(o.id);
+    if (!rec) return;
+    rec._sd = rec._sd || { log: [], was: {} };
+    if (o.set && typeof o.set === "object") {
+      Object.entries(o.set).forEach(([k, v]) => {
+        if (!(k in rec._sd.was)) rec._sd.was[k] = rec[k] === undefined ? null : rec[k];
+        rec[k] = v;
+      });
+      if ("sourceClass" in o.set) {
+        rec._sd.log.push({ label: `RELABELED BY SITINGDASH: ${String(rec._sd.was.sourceClass || "—").toUpperCase()} → ${String(o.set.sourceClass).toUpperCase()}`, rule: o.rule, reason: o.reason });
+      }
+      if ("severity" in o.set) {
+        rec._sd.log.push({ label: "SEVERITY SET BY SITINGDASH (INFERENCE)", rule: o.rule, reason: o.set.severityBasis || o.reason });
+      }
+    }
+    if (Array.isArray(o.addSourceUrls)) {
+      rec._sd.addedUrls = o.addSourceUrls.filter((u) => safeUrl(u));
+      rec._sd.sourceNote = o.sourceNote || "source added by SitingDash";
+      rec._sd.log.push({ label: "SOURCE ADDED BY SITINGDASH", rule: o.rule, reason: o.reason });
+    }
+    if (Array.isArray(o.relatedRecords)) {
+      rec._sd.related = o.relatedRecords;
+      rec._sd.log.push({ label: "RELATED RECORDS LINKED BY SITINGDASH", rule: o.rule, reason: o.reason });
+    }
+    applied += 1;
+  });
+  return applied;
+}
+
 function renderNoData() {
   $("#feed-banner").classList.add("placeholder");
   $("#feed-banner").innerHTML = `<span class="pulse" aria-hidden="true"></span><div><strong>NO DATA LOADED.</strong>
@@ -587,9 +685,20 @@ function renderNoData() {
   ["#out-ballots", "#out-council", "#out-flags"].forEach((sel) => { $(sel).innerHTML = `<p class="loading-note">No data loaded.</p>`; });
 }
 
-loadData().then(({ payload, how }) => {
+loadData().then(async ({ payload, how }) => {
   if (!payload) { renderNoData(); return; }
-  renderBanner(payload, how);
+  const { overlay, how: ovHow } = await loadOverrides();
+  const n = applyOverrides(payload, overlay);
+  renderBanner(payload, `${how} · ${overlay ? `${ovHow} (${n} applied)` : ovHow}`);
+  if (overlay) {
+    const ov = overlay.overrides || [];
+    const relabeled = ov.filter((o) => o.set && o.set.sourceClass === "unconfirmed").length;
+    const rated = ov.filter((o) => o.set && "severity" in o.set).length;
+    const sub = document.createElement("div");
+    sub.className = "banner-sd";
+    sub.textContent = `SitingDash overlay: ${relabeled} records relabeled FACT → UNCONFIRMED; severity rated on ${rated} red flags (SitingDash inference, rubric in SCHEMA.md); others UNRATED. SitingIntel's file is unchanged.`;
+    $("#feed-banner > div")?.appendChild(sub);
+  }
   bindUi(payload);
   renderCounty(payload, countyFromHash(payload));
 }).catch((err) => {

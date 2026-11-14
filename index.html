@@ -6,6 +6,7 @@
   <meta name="color-scheme" content="dark">
   <title>SitingDash — Ohio Pilot</title>
   <meta name="description" content="A county scoreboard of how siting decisions were made — project outcomes, ballot tallies, council votes, sentiment, and red flags.">
+  <link rel="canonical" href="https://winecoolermike.github.io/sitingdash/">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,7 +42,9 @@
     <span class="sep">·</span>
     <span class="badge inference">Inference</span> derived judgment
     <span class="sep">·</span>
-    <span class="badge sev-none">SEV —</span> severity not rated (severity is always an inference)
+    <span class="badge unconfirmed">Unconfirmed</span> secondhand or single-source, not verified against an official/primary record
+    <span class="sep">·</span>
+    Severity is a SitingDash inference (rubric in SCHEMA.md)
     <span class="sep">·</span>
     Dates: last verified shown per row, converted to Pacific (PT) calendar date
     <button type="button" class="notes-toggle" id="notes-toggle" aria-pressed="false">Expand all notes</button>
@@ -194,7 +197,7 @@
         </div>
         <span class="stamp">AWAITING SITINGINTEL DATA</span>
       </header>
-      <p class="card-lead">Contradictions, gaps, and weakly sourced items, with the evidence behind each. Severity is not yet rated.</p>
+      <p class="card-lead">Contradictions, gaps, and weakly sourced items, with the evidence behind each. Severity is a SitingDash inference from each flag's own text using the rubric in SCHEMA.md; flags no rule clearly matches show UNRATED.</p>
       <div id="out-flags">
         <p class="loading-note">Loading…</p>
       </div>
